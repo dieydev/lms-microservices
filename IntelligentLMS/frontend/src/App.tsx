@@ -2,9 +2,11 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 // Layouts
 import UserLayout from "./layouts/UserLayout";
+import AdminLayout from "./layouts/AdminLayout";
 
 // Auth
 import Login from "./pages/auth/Login";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 
 // User Pages
 import Dashboard from "./pages/user/Dashboard";
@@ -14,7 +16,7 @@ import Achievements from "./pages/user/Achievements";
 import Profile from "./pages/user/Profile";
 import Notifications from "./pages/user/Notifications";
 import LessonView from "./pages/user/LessonView";
-import CourseDetail from "./pages/user/CourseDetail"; // Đã bổ sung
+import CourseDetail from "./pages/user/CourseDetail";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -24,34 +26,42 @@ import Teachers from "./pages/admin/Teachers";
 function App() {
   return (
     <Routes>
-      {/* 1. PUBLIC ROUTES: Trang Login đứng riêng */}
-      <Route path="/login" element={<Login />} />
+      {/* 1. PUBLIC ROUTES */}
+      <Route path="/auth/login" element={<Login />} />
+      <Route path="/auth/forgot-password" element={<ForgotPassword />} />
 
-      {/* 2. USER ROUTES: Có Sidebar Academy & Header Blue */}
+      {/* 2. USER ROUTES */}
       <Route element={<UserLayout />}>
         <Route path="/user/dashboard" element={<Dashboard />} />
         <Route path="/user/courses" element={<Courses />} />
-        <Route path="/user/course/:id" element={<CourseDetail />} /> 
+        <Route path="/user/course/:id" element={<CourseDetail />} />
         <Route path="/user/learning-path" element={<LearningPath />} />
         <Route path="/user/achievements" element={<Achievements />} />
-        <Route path="/user/profile" element={<Profile />} />  
-        <Route path="/user/notifications" element={<Notifications />} /> 
-        <Route path="/user/lesson/:courseId" element={<LessonView />} /> 
+        <Route path="/user/profile" element={<Profile />} />
+        <Route path="/user/notifications" element={<Notifications />} />
+        <Route path="/user/lesson/:courseId" element={<LessonView />} />
       </Route>
 
-      {/* 3. ADMIN ROUTES: Bạn có thể dùng chung UserLayout hoặc tạo AdminLayout riêng */}
-      <Route element={<UserLayout />}> 
+      {/* 3. ADMIN ROUTES */}
+      <Route element={<AdminLayout />}>
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/monitor" element={<SystemMonitor />} />
         <Route path="/admin/teachers" element={<Teachers />} />
       </Route>
 
-      {/* 4. DEFAULT REDIRECTS */}
+      {/* 4. DEFAULT REDIRECT */}
       <Route path="/" element={<Navigate to="/user/dashboard" />} />
       <Route path="/courses" element={<Navigate to="/user/courses" />} />
 
-      {/* Trang lỗi 404 (Nếu cần) */}
-      <Route path="*" element={<div className="p-20 text-center font-black text-gray-300">404 - KHÔNG TÌM THẤY TRANG</div>} />
+      {/* 404 */}
+      <Route
+        path="*"
+        element={
+          <div className="p-20 text-center font-black text-gray-300">
+            404 - KHÔNG TÌM THẤY TRANG
+          </div>
+        }
+      />
     </Routes>
   );
 }
