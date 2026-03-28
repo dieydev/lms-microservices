@@ -3,6 +3,8 @@ using IntelligentLMS.Auth.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +35,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -49,11 +53,12 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Auto-migrate (simplify or remove if user wants pure template, but keeping for functionality)
+// Database initialization and seeding
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
     db.Database.EnsureCreated();
+    await DbInitializer.SeedAsync(db);
 }
 
 app.Run();

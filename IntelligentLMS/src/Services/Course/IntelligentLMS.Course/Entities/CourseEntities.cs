@@ -12,6 +12,7 @@ public class Course
     public string Category { get; set; } = string.Empty;
     public Guid InstructorId { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public decimal Price { get; set; } = 0m;
 
     public List<Lesson> Lessons { get; set; } = new();
 }

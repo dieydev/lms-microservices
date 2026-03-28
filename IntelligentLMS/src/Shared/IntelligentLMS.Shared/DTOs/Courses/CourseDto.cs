@@ -8,4 +8,5 @@ public class CourseDto
     public string Level { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
     public Guid InstructorId { get; set; }
+    public decimal Price { get; set; }
 }

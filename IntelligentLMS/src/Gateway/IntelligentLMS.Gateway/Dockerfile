@@ -3,9 +3,9 @@ WORKDIR /app
 EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+WORKDIR /app
 
-# Copy Shared Project (Required because Gateway validates JWT which might use Shared constants/DTOs)
+# Copy Shared Project
 COPY ["src/Shared/IntelligentLMS.Shared/IntelligentLMS.Shared.csproj", "src/Shared/IntelligentLMS.Shared/"]
 
 # Copy Gateway Project
@@ -14,15 +14,16 @@ COPY ["src/Gateway/IntelligentLMS.Gateway/IntelligentLMS.Gateway.csproj", "src/G
 # Restore
 RUN dotnet restore "src/Gateway/IntelligentLMS.Gateway/IntelligentLMS.Gateway.csproj"
 
-# Copy Everything
-COPY . .
+# Copy source code
+COPY src ./src
 
 # Build
-WORKDIR "/src/src/Gateway/IntelligentLMS.Gateway"
+WORKDIR "src/Gateway/IntelligentLMS.Gateway"
 RUN dotnet build "IntelligentLMS.Gateway.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "IntelligentLMS.Gateway.csproj" -c Release -o /app/publish /p:UseAppHost=false
+WORKDIR /app/src/Gateway/IntelligentLMS.Gateway
+RUN dotnet publish IntelligentLMS.Gateway.csproj -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
