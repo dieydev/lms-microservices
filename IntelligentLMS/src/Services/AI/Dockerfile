@@ -2,10 +2,12 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
+# ✅ fix path
+COPY src/Services/AI/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# ✅ copy đúng folder AI
+COPY src/Services/AI .
 
 EXPOSE 8000
 

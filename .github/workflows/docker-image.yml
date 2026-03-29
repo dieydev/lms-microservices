@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:   # 🔥 thêm để bấm chạy tay
 
 jobs:
   build-and-push:
@@ -79,7 +80,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/intelligentlms-gateway:latest
 
-      # 🔥 AI SERVICE
+      # 🔥 AI SERVICE (⚠️ QUAN TRỌNG)
       - name: Build and push AI Service
         uses: docker/build-push-action@v5
         with:
