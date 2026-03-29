@@ -29,7 +29,8 @@ jobs:
       - name: Build and push AuthService
         uses: docker/build-push-action@v5
         with:
-          context: ./IntelligentLMS/src/Services/Auth/IntelligentLMS.Auth
+          context: ./IntelligentLMS
+          file: ./IntelligentLMS/src/Services/Auth/IntelligentLMS.Auth/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/intelligentlms-auth:latest
 
@@ -37,7 +38,8 @@ jobs:
       - name: Build and push UserService
         uses: docker/build-push-action@v5
         with:
-          context: ./IntelligentLMS/src/Services/User/IntelligentLMS.User
+          context: ./IntelligentLMS
+          file: ./IntelligentLMS/src/Services/User/IntelligentLMS.User/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/intelligentlms-user:latest
 
@@ -45,7 +47,8 @@ jobs:
       - name: Build and push CourseService
         uses: docker/build-push-action@v5
         with:
-          context: ./IntelligentLMS/src/Services/Course/IntelligentLMS.Course
+          context: ./IntelligentLMS
+          file: ./IntelligentLMS/src/Services/Course/IntelligentLMS.Course/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/intelligentlms-course:latest
 
@@ -53,7 +56,8 @@ jobs:
       - name: Build and push ProgressService
         uses: docker/build-push-action@v5
         with:
-          context: ./IntelligentLMS/src/Services/Progress/IntelligentLMS.Progress
+          context: ./IntelligentLMS
+          file: ./IntelligentLMS/src/Services/Progress/IntelligentLMS.Progress/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/intelligentlms-progress:latest
 
@@ -61,7 +65,8 @@ jobs:
       - name: Build and push AnalyticsService
         uses: docker/build-push-action@v5
         with:
-          context: ./IntelligentLMS/src/Services/Analytics/IntelligentLMS.Analytics
+          context: ./IntelligentLMS
+          file: ./IntelligentLMS/src/Services/Analytics/IntelligentLMS.Analytics/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/intelligentlms-analytics:latest
 
@@ -69,7 +74,8 @@ jobs:
       - name: Build and push Gateway
         uses: docker/build-push-action@v5
         with:
-          context: ./IntelligentLMS/src/Gateway/IntelligentLMS.Gateway
+          context: ./IntelligentLMS
+          file: ./IntelligentLMS/src/Gateway/IntelligentLMS.Gateway/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/intelligentlms-gateway:latest
 
@@ -77,6 +83,7 @@ jobs:
       - name: Build and push AI Service
         uses: docker/build-push-action@v5
         with:
-          context: ./IntelligentLMS/src/Services/AI
+          context: ./IntelligentLMS
+          file: ./IntelligentLMS/src/Services/AI/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/intelligentlms-ai:latest
