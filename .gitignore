@@ -6,6 +6,7 @@
 .idea/
 .vs/
 .vscode/
+*.iml
 
 # Frontend
 IntelligentLMS/frontend/node_modules/

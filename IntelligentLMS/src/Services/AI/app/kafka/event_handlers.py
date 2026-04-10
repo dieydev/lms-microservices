@@ -71,12 +71,23 @@ def handle_course_rated(msg_data: dict):
     upsert_course_popularity(course_id, rating_val=rating)
     clear_recommendation_cache()
 
+def handle_lesson_updated(msg_data: dict):
+    # Payload keys typically follow .NET default TitleCase/PascalCase JSON serialization
+    lesson_id = str(msg_data.get('LessonId', msg_data.get('lessonId', '')))
+    content = msg_data.get('Content', msg_data.get('content', ''))
+    
+    if lesson_id and content:
+        from app.celery_worker import generate_lesson_summary_task
+        logger.info(f"Dispatching summary task for Lesson {lesson_id} to Queue")
+        generate_lesson_summary_task.apply_async(args=[lesson_id, content], priority=3)
+
 EVENT_DISPATCH = {
     "user-registered": handle_user_registered,
     "course-enrolled": handle_course_enrolled,
     "lesson-completed": handle_lesson_completed,
     "progress-updated": handle_progress_updated,
-    "course-rated": handle_course_rated
+    "course-rated": handle_course_rated,
+    "lesson-updated": handle_lesson_updated
 }
 
 def process_message(topic: str, value: str):

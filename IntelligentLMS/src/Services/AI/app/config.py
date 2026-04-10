@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     TOPIC_LESSON_COMPLETED: str = "lesson-completed"
     TOPIC_PROGRESS_UPDATED: str = "progress-updated"
     TOPIC_COURSE_RATED: str = "course-rated"
+    TOPIC_LESSON_UPDATED: str = "lesson-updated"
     
     # Data Storage
     DATA_DIR: str = os.path.join(os.path.dirname(__file__), "data_storage")
@@ -29,6 +30,13 @@ class Settings(BaseSettings):
     DATA_CACHE_TTL: int = 3600 # seconds (if needed)
     KAFKA_BATCH_SIZE: int = 10
     LOG_LEVEL: str = "INFO"
+    
+    # AI & Integrations
+    OLLAMA_URL: str = os.getenv("OLLAMA_URL", "http://localhost:11434")
+    OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "llama2:2b")
+    COURSE_SERVICE_URL: str = os.getenv("COURSE_SERVICE_URL", "http://localhost:5003")
+    INTERNAL_API_KEY: str = os.getenv("INTERNAL_API_KEY", "intelligent_internal_secret_key")
+    REDIS_URL: str = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
     
     class Config:
         env_file = ".env"

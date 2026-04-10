@@ -102,14 +102,6 @@ services:
       - postgres
       - kafka
       - redis
-      # - ai-service # Commented out if not built yet or handled elsewhere
-
-      # ai-service:
-      #   build:
-      #     context: src/Services/AI
-      #     dockerfile: Dockerfile
-      #   ports:
-      #     - "8000:8000"
 
   analytics-service:
     build:
@@ -121,6 +113,55 @@ services:
       - Kafka__GroupId=analytics-group
     depends_on:
       - kafka
+
+  ai-service:
+    build:
+      context: src/Services/AI
+      dockerfile: Dockerfile
+    container_name: lms_ai_service
+    ports:
+      - "8000:8000"
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+      - OLLAMA_URL=http://ollama:11434
+      - Kafka__BootstrapServers=kafka:9092
+    depends_on:
+      - kafka
+      - redis
+      - ollama
+
+  celery-worker:
+    build:
+      context: src/Services/AI
+      dockerfile: Dockerfile
+    container_name: lms_celery_worker
+    command: ["celery", "-A", "app.celery_worker.celery", "worker", "--loglevel=info"]
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+      - OLLAMA_URL=http://ollama:11434
+    depends_on:
+      - redis
+      - ollama
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: lms_ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgres:
     image: postgres:15-alpine
@@ -157,3 +198,4 @@ volumes:
   postgres_data:
   kafka_data:
   redis_data:
+  ollama_data:

@@ -30,7 +30,8 @@ def start_kafka_consumer():
         settings.TOPIC_COURSE_ENROLLED,
         settings.TOPIC_LESSON_COMPLETED,
         settings.TOPIC_PROGRESS_UPDATED,
-        settings.TOPIC_COURSE_RATED
+        settings.TOPIC_COURSE_RATED,
+        settings.TOPIC_LESSON_UPDATED
     ]
 
     consumer.subscribe(topics)

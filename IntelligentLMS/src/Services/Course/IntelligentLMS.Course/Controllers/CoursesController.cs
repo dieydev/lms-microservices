@@ -310,10 +310,12 @@ public class CoursesController : ControllerBase
 
         var lesson = new Lesson
         {
-            Title = lessonDto.Title,
-            Content = lessonDto.Content,
+            Title = lessonDto?.Title ?? string.Empty,
+            Content = lessonDto?.Content ?? string.Empty,
             CourseId = courseId,
-            Order = lessonDto.Order
+            Order = lessonDto?.Order ?? 0,
+            ContentUrl = lessonDto?.ContentUrl,
+            ContentType = lessonDto?.ContentType
         };
 
         _context.Lessons.Add(lesson);
@@ -326,6 +328,47 @@ public class CoursesController : ControllerBase
         }
         
         lessonDto.Id = lesson.Id;
+
+        return Ok(lessonDto);
+    }
+
+    [Authorize(Roles = "Admin,Teacher")]
+    [HttpPut("{courseId}/lessons/{lessonId}")]
+    public async Task<IActionResult> UpdateLesson(Guid courseId, Guid lessonId, [FromBody] LessonDto lessonDto)
+    {
+        var course = await _context.Courses.FindAsync(courseId);
+        if (course == null) return NotFound("Course not found");
+
+        var role = GetCurrentRole();
+        var userId = GetCurrentUserId();
+        if (role == "teacher" && (userId == null || course.InstructorId != userId.Value))
+            return Forbid();
+
+        var lesson = await _context.Lessons.FirstOrDefaultAsync(l => l.Id == lessonId && l.CourseId == courseId);
+        if (lesson == null) return NotFound("Lesson not found");
+
+        lesson.Title = lessonDto?.Title ?? lesson.Title;
+        lesson.Content = lessonDto?.Content ?? lesson.Content;
+        lesson.Order = lessonDto?.Order ?? lesson.Order;
+        lesson.ContentUrl = lessonDto?.ContentUrl;
+        lesson.ContentType = lessonDto?.ContentType;
+
+        await _context.SaveChangesAsync();
+
+        if (_cache != null)
+        {
+            await _cache.RemoveAsync("courses:all");
+            await _cache.RemoveAsync($"courses:detail:{courseId}");
+        }
+
+        // Publish sự kiện để AI Service xử lý summary background
+        var updateEvent = new LessonUpdatedEvent(
+            LessonId: lesson.Id,
+            CourseId: course.Id,
+            Content: lesson.Content,
+            Timestamp: DateTime.UtcNow
+        );
+        await _eventPublisher.PublishAsync("lesson-updated", updateEvent);
 
         return Ok(lessonDto);
     }

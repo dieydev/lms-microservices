@@ -30,4 +30,7 @@ public class Lesson
     public int Order { get; set; }
     public string ContentUrl { get; set; } = string.Empty; // URL to video or document
     public string ContentType { get; set; } = "Video";
+    public string Summary { get; set; } = string.Empty;
+    public List<string> Keywords { get; set; } = new();
+    public DateTime? SummaryUpdatedAt { get; set; }
 }

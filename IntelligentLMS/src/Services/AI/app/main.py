@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from app.api import recommend_routes, learning_path_routes, dropout_routes, system_routes
+from app.api import recommend_routes, learning_path_routes, dropout_routes, system_routes, review_routes
 from app.kafka.consumer import start_consumer_thread, stop_consumer_thread
 from app.data.data_cache import data_cache
 from app.utils.logger import logger
@@ -36,6 +36,7 @@ app.include_router(recommend_routes.router)
 app.include_router(learning_path_routes.router)
 app.include_router(dropout_routes.router)
 app.include_router(system_routes.router)
+app.include_router(review_routes.router)
 
 if __name__ == "__main__":
     import uvicorn

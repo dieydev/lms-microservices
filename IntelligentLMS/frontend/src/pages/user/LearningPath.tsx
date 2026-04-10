@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { courseApi, CourseDto, CourseProgressResponse } from '../../services/api';
 import { getCurrentUserFromToken, isAuthenticated } from '../../utils/auth';
 
+import RoadmapGraph from '../../components/RoadmapGraph';
+
 type StepStatus = 'completed' | 'current' | 'locked';
 
 interface LearningStep {
@@ -22,6 +24,14 @@ const LearningPath = () => {
   const user = getCurrentUserFromToken();
   const [steps, setSteps] = useState<LearningStep[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const load = async () => {
@@ -51,8 +61,6 @@ const LearningPath = () => {
         );
 
         const ordered = entries.sort((a, b) => {
-          // Sắp theo thứ tự: Beginner -> Intermediate -> Advanced,
-          // cùng level thì completed -> current -> locked.
           const la = levelOrder(a.course.level);
           const lb = levelOrder(b.course.level);
           if (la !== lb) return la - lb;
@@ -102,9 +110,11 @@ const LearningPath = () => {
       )}
 
       {hasAny && (
-        <div className="relative space-y-8 ml-6 mt-4">
-          {/* Đường kẻ dọc nối các node */}
-          <div className="absolute left-4 top-0 bottom-0 w-[2px] bg-blue-100" />
+        <div className="mt-6">
+          {isMobile ? (
+            <div className="relative space-y-8 ml-6 mt-4">
+              {/* Đường kẻ dọc nối các node */}
+              <div className="absolute left-4 top-0 bottom-0 w-[2px] bg-blue-100" />
 
           {steps.map((step, idx) => {
             const pct = step.progress?.progressPercentage ?? 0;
@@ -156,10 +166,15 @@ const LearningPath = () => {
               </div>
             );
           })}
+            </div>
+          ) : (
+            <div className="w-full flex-1">
+              <RoadmapGraph steps={steps} />
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 };
-
 export default LearningPath;
