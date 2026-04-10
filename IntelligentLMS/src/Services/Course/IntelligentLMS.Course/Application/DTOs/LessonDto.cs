@@ -7,4 +7,6 @@ public class LessonDto
     public string Content { get; set; } = string.Empty;
     public Guid CourseId { get; set; }
     public int Order { get; set; }
+    public string? ContentUrl { get; set; }
+    public string? ContentType { get; set; }
 }

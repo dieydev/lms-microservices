@@ -310,10 +310,12 @@ public class CoursesController : ControllerBase
 
         var lesson = new Lesson
         {
-            Title = lessonDto.Title,
-            Content = lessonDto.Content,
+            Title = lessonDto?.Title ?? string.Empty,
+            Content = lessonDto?.Content ?? string.Empty,
             CourseId = courseId,
-            Order = lessonDto.Order
+            Order = lessonDto?.Order ?? 0,
+            ContentUrl = lessonDto?.ContentUrl,
+            ContentType = lessonDto?.ContentType
         };
 
         _context.Lessons.Add(lesson);
@@ -345,11 +347,11 @@ public class CoursesController : ControllerBase
         var lesson = await _context.Lessons.FirstOrDefaultAsync(l => l.Id == lessonId && l.CourseId == courseId);
         if (lesson == null) return NotFound("Lesson not found");
 
-        lesson.Title = lessonDto.Title;
-        lesson.Content = lessonDto.Content;
-        lesson.Order = lessonDto.Order;
-        lesson.ContentUrl = lessonDto.ContentUrl;
-        lesson.ContentType = lessonDto.ContentType;
+        lesson.Title = lessonDto?.Title ?? lesson.Title;
+        lesson.Content = lessonDto?.Content ?? lesson.Content;
+        lesson.Order = lessonDto?.Order ?? lesson.Order;
+        lesson.ContentUrl = lessonDto?.ContentUrl;
+        lesson.ContentType = lessonDto?.ContentType;
 
         await _context.SaveChangesAsync();
 
